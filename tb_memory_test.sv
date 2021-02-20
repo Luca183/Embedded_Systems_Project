@@ -2,7 +2,7 @@
 
 `timescale 1ns / 1ps
 
-//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
 // 
@@ -664,8 +664,8 @@ endfunction
 
 //FARE QUESTA COSA:
 /*
-SOLO PER LE PERIFERICHE, IL PROCESSORE POTREBBE VOLER SCRIVERE HALF-WORD / BYTE, QUINDI FACCIO COSì:
-- controllo se l'indirizzo è della periferica
+SOLO PER LE PERIFERICHE, IL PROCESSORE POTREBBE VOLER SCRIVERE HALF-WORD / BYTE, QUINDI FACCIO COSÃ¬:
+- controllo se l'indirizzo Ã¨ della periferica
 - var_addr = addr[3:0]
 	if var_add > 0 
 		tmp = var_addr 
@@ -782,7 +782,7 @@ SEGNALI:
 AWREADY
 AWVALID
 AWADDR
-AWPROT  (3 bit)//sono tutti 0 dal master, quindi la memoria li può ignorare // input per la memoria
+AWPROT  (3 bit)//sono tutti 0 dal master, quindi la memoria li puÃ² ignorare // input per la memoria
 
 WREADY
 WVALID
@@ -791,7 +791,7 @@ WSTRB (4 bit) // sono tutti a 1 , quindi li ignoriamo (?)//input per la memoria
 
 BVALID
 BREADY
-BRESP  //serve per dire al processore se la scrittura è corretta  //output per la memoria
+BRESP  //serve per dire al processore se la scrittura Ã¨ corretta  //output per la memoria
 
 ARVALID
 ARREADY
@@ -801,7 +801,7 @@ ARPROT  (3 bit) // da ignorare (lato memoria)  //input per la memoria
 RVALID
 RREADY
 RDATA
-RRESP (2 bit) // è necessario? serve per dire al processore se la lettura è corretta  //output per la memoria
+RRESP (2 bit) // Ã¨ necessario? serve per dire al processore se la lettura Ã¨ corretta  //output per la memoria
 
 */
 
@@ -817,7 +817,7 @@ RRESP (2 bit) // è necessario? serve per dire al processore se la lettura è corr
 
 //in ogni always block introdurre un delay (per rispettare il reset) di 100 colpi di clock: if start == 0: repeat(100) @(posedge clk); 
 //																							elsif start == 1: algoritmo.
-//quindi introdurre un segnale "start" nell' initial block. (o magari è meglio usare direttamente il segnale rst)
+//quindi introdurre un segnale "start" nell' initial block. (o magari Ã¨ meglio usare direttamente il segnale rst)
 
 
 
