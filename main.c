@@ -69,7 +69,7 @@ static void MX_GPIO_Init(void);
 uint32_t k = 0;
 uint32_t i = 0;
 
-uint32_t* __DEBUG = (uint32_t*)0x0003FFFC;
+uint32_t* __DEBUG = (uint32_t*)0x40010800;
 uint32_t* __DEBUG_ADDR = (uint32_t*)0x0003FFF8;
 
 
@@ -119,7 +119,7 @@ for(i = 0; i<100; i++)
 	  {
 		  k++;
 	  }
-	  k = 0;
+	  //k = 0;
 
 //__DEBUG->led = 0;
 
@@ -132,7 +132,7 @@ for(i = 0; i<100; i++)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (k<15)
+  while (k<200)
   {
 	  *__DEBUG = k; //*((volatile unsigned int*)0x2000fff4);
 	  *__DEBUG_ADDR = &k;

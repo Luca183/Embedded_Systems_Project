@@ -32,8 +32,6 @@ module tb_memory_test();
 parameter HALF_CLK_PERIOD = 5; //  @ 100MHz
 parameter VMEM_FILE_1 = "file_1.mem";
 parameter VMEM_FILE_2 = "file.mem"; //"C:/EMBEDDED_SYSTEM/Project/lab4_ADC_LDR.dat";
-//parameter unsigned MEM_NUM_LINE = $unsigned(32'h7FFFFFFF);//longint'(32'hFFFFFFFF);//1024; //unsigned'(4294967295); // number of memory lines (4GB: 32 bit architecture)
-
 
 
 /******************** SIGNALS ***************************/
@@ -175,11 +173,9 @@ begin
 	rst = 0;
 	
 	
-	$readmemh(VMEM_FILE_2, flash_1);
+	$readmemh(VMEM_FILE_1, flash_1);
 	$readmemh(VMEM_FILE_2, flash_2); // copies hex values from hex text file to memory array
 	
-	//R_m_axis_tdata <= {flash_1[0], flash_1[1], flash_1[2], flash_1[3]}; //send the first data by default
-	//R_m_axis_tvalid <= 1'b1;
 	
 	
 	//GPIOA_CRL reset value
@@ -235,12 +231,7 @@ begin
 	
 	repeat(10) @(posedge clk);
 	
-	/*
-	for (int i=0; i<MEM_NUM_LINE; i++) // prints memory lines
-	$display("%08x", memTb[i]);
-	*/
 	
-	//$finish;
 end
 
 
@@ -364,36 +355,7 @@ begin
 	endcase		
 end
 end
-/*
-// read without FSM
-always@(posedge clk)
-begin
 
-if(rst == 1'b1)
-begin
-
-	if(R_m_axis_tready == 1'b1) 
-	begin
-		
-		if(AR_s_axis_tvalid == 1'b1) //if the microcontroller sends valid data
-		begin
-			
-			//R_m_axis_tresp <= send_R_resp(R_select_memory);
-			R_m_axis_tvalid <= 1'b1;
-			//R_m_axis_tdata <= send_data_func(R_select_memory);
-			
-		end
-		
-		else if (AR_s_axis_tvalid == 1'b0) // if for some reason the received data are not valid, I don't have to send any data. moreover the micro has ready 0 1, so i have to deassert the valid signal (valid = 0), otherwise the micro continues to read the same data
-			R_m_axis_tvalid <= 1'b0;  
-		
-	end
-
-end	
-
-end
-
-*/
 
 
 
@@ -662,23 +624,7 @@ endfunction
 
 
 
-//FARE QUESTA COSA:
-/*
-SOLO PER LE PERIFERICHE, IL PROCESSORE POTREBBE VOLER SCRIVERE HALF-WORD / BYTE, QUINDI FACCIO COSì:
-- controllo se l'indirizzo è della periferica
-- var_addr = addr[3:0]
-	if var_add > 0 
-		tmp = var_addr 
-		new_addr = var_addr - tmp
-		
-	if var_addr range(4,8)
-		tmp = var_addr - 4
-		new_addr = var_addr - tmp
-		addr[3:0] = new_addr
-		
-	or >8 / <12
-		
-*/
+
 
 
 
@@ -809,33 +755,19 @@ RRESP (2 bit) // è necessario? serve per dire al processore se la lettura è corr
 
 
 
-//fare degli always@(posedge clk) per ogni periferica
-//es: periferica del GPIO_A : al posedge del clock controllo i bit di tutti i registri che interessano questa periferica, 
-//poi genero un segnale in "output" (un segnale nel testbench) che sia coerente con i dati presenti nei registri
-//es: EN = 1; PORT_A = 1; PIN_4 = 1; CTRL = 01 (output pin); OUT = 1  -> accendi il led: "pin_4 <= 1;"
-
-
-//in ogni always block introdurre un delay (per rispettare il reset) di 100 colpi di clock: if start == 0: repeat(100) @(posedge clk); 
-//																							elsif start == 1: algoritmo.
-//quindi introdurre un segnale "start" nell' initial block. (o magari è meglio usare direttamente il segnale rst)
-
-
-
-
-// 0x4001 0800 - 0x4001 0BFF GPIO Port A
-// ODR: offset 0x0C
 logic led;// = 1'b0;
 
 
 
-// GPIO_A Peripheral
+// READ FROM THAT SPECIFIC ADDRESS   0x4001 0800 : CTR del GPIOA
 always@(*)
 begin
 
 if(rst == 1'b1)
 begin
 	
-	led = flash_1[18'h3FFFC];
+	//led = flash_1[18'h3FFFC];
+	led = peripherals[18'h10800];
 
 end	
 
