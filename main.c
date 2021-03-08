@@ -33,7 +33,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-//#define __DEBUG (*(volatile unsigned int*)0x0003FFFC) //indirizzo non utilizzato (rappresenta/emula il gpio)
 
 /* USER CODE END PD */
 
@@ -53,14 +52,18 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
-//uint32_t* DEBUG = 0x0003FFFF;
 
-/*struct debug_struct{
-	volatile unsigned int led;
-};
+void If_debugger_begin();
+void If_debugger_end();
 
-#define __DEBUG ((struct debug_struct*)0x0003FFFF)
-*/
+void For_debugger_begin();
+void For_debugger_end();
+
+void While_debugger_begin();
+void While_debugger_end();
+
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -69,9 +72,12 @@ static void MX_GPIO_Init(void);
 uint32_t k = 0;
 uint32_t i = 0;
 
-uint32_t* __DEBUG = (uint32_t*)0x40010800;
-uint32_t* __DEBUG_ADDR = (uint32_t*)0x0003FFF8;
+// main debug variable
+uint32_t* __DEBUG = (uint32_t*)0x40010800;  //it can be used to identify the specific code portion to debug
 
+// secondary debug variables (used to see the bit-banding effect)
+uint32_t* __DEBUG_ADDR = (uint32_t*)0x0003FFF8; //it contains the address of a specific variable
+uint32_t* __DEBUG_VAR = (uint32_t*)0x0003FFF4;  //it contains the content of the aforementioned variable
 
 /* USER CODE END 0 */
 
@@ -106,49 +112,64 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
+For_debugger_begin();  // OPEN DEBUGGER WINDOW : FOR
 
-//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-
-*__DEBUG = 1;
-
-
-
-//__DEBUG->led = 1;
 
 for(i = 0; i<100; i++)
 	  {
 		  k++;
 	  }
-	  //k = 0;
 
-//__DEBUG->led = 0;
 
-*__DEBUG = 0;
+For_debugger_end();  // CLOSE DEBUGGER WINDOW : FOR
 
-//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+
+
+If_debugger_begin(); // OPEN DEBUGGER WINDOW : IF
+
+if(k > 50) k = 200;
+
+If_debugger_end(); // CLOSE DEBUGGER WINDOW : IF
+
+
+
+While_debugger_begin(); // OPEN DEBUGGER WINDOW : WHILE
+
+while(k > 0) k--;
+
+While_debugger_end(); // CLOSE DEBUGGER WINDOW : WHILE
+
+
 
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (k<200)
+  while (1)
   {
-	  *__DEBUG = k; //*((volatile unsigned int*)0x2000fff4);
+	  *__DEBUG_VAR = k;
 	  *__DEBUG_ADDR = &k;
-	  //__DEBUG = 1;
+
 
 	  k = k + 1;
 
-	  *__DEBUG = 0;
+	  If_debugger_begin(); // OPEN DEBUGGER WINDOW : IF
+
+	  if(k > 100) k = 0;
+
+	  If_debugger_end(); // CLOSE DEBUGGER WINDOW : IF
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
   /* USER CODE END 3 */
-}
+  }
 
-  return k;
+
 
 }
 
@@ -216,6 +237,49 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+
+
+void If_debugger_begin(){
+
+	*__DEBUG = 1;
+
+}
+void If_debugger_end(){
+
+	*__DEBUG = 0;
+
+}
+
+void For_debugger_begin(){
+
+	*__DEBUG = 1;
+	*__DEBUG = 0;
+	*__DEBUG = 1;
+
+}
+void For_debugger_end(){
+
+	*__DEBUG = 0;
+	*__DEBUG = 1;
+	*__DEBUG = 0;
+
+}
+
+void While_debugger_begin(){
+
+	*__DEBUG = 1;
+	*__DEBUG = 0;
+
+}
+void While_debugger_end(){
+
+	*__DEBUG = 1;
+	*__DEBUG = 0;
+
+}
+
+
 
 /* USER CODE END 4 */
 
