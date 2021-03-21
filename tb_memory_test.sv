@@ -2,25 +2,6 @@
 
 `timescale 1ns / 1ps
 
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 12.12.2020 19:06:21
-// Design Name: 
-// Module Name: tb_memory_test
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 
 module tb_memory_test();
@@ -31,9 +12,7 @@ module tb_memory_test();
 
 parameter HALF_CLK_PERIOD = 5; //  @ 100MHz
 parameter VMEM_FILE_1 = "file_1.mem";
-parameter VMEM_FILE_2 = "file.mem"; //"C:/EMBEDDED_SYSTEM/Project/lab4_ADC_LDR.dat";
-//parameter unsigned MEM_NUM_LINE = $unsigned(32'h7FFFFFFF);//longint'(32'hFFFFFFFF);//1024; //unsigned'(4294967295); // number of memory lines (4GB: 32 bit architecture)
-
+parameter VMEM_FILE_2 = "file.mem"; 
 
 
 /******************** SIGNALS ***************************/
@@ -41,8 +20,8 @@ parameter VMEM_FILE_2 = "file.mem"; //"C:/EMBEDDED_SYSTEM/Project/lab4_ADC_LDR.d
 logic clk;
 logic rst = 1'b1;
 
-
-logic [7:0] R_select_memory_c;  //used to store the 2 MSBs of the address in order to select the memory that I have to use
+//used to store the 2 MSBs of the address in order to select the memory that I have to use
+logic [7:0] R_select_memory_c;  
 logic [7:0] W_select_memory_c;
 logic [7:0] R_select_memory_s;
 logic [7:0] W_select_memory_s;
@@ -54,18 +33,18 @@ logic [31:0] AW_addr_s;
 logic [31:0] W_data_s;   
 logic b_sent_s = 1'b0;
 
-logic [31:0] AR_addr_c;
-logic R_sent_c = 1'b0;
-logic [31:0] AR_addr_s;
+logic [31:0] AR_addr_c;	//register buffer for the AR address
+logic R_sent_c = 1'b0;	
+logic [31:0] AR_addr_s;	//register buffer for the R data
 logic R_sent_s = 1'b0;
 
 // MEMORY DESCRIPTION: DATA FROM "STM32F107RB" MICROCONTROLLER'S DATASHEET
 
 /*
 
-FLASH_1: 				 0X0000 0000 - 0X0003 FFFF  : 18 bit
+boot: 				     0X0000 0000 - 0X0003 FFFF  : 18 bit
 
-FLASH_2: 				 0X0800 0000 - 0X0803 FFFF  : 18 bit
+flash: 				     0X0800 0000 - 0X0803 FFFF  : 18 bit
 
 SYS MEM & OPTION BYTES : 0X1FFF B000 - 0X1FFF FFFF  : 15 bit
 
@@ -77,12 +56,12 @@ M3-REGISTERS: 			 0XE000 0000 - 0XE00F FFFF  : 20 BIT
 
 */
 
-//logic [7:0] memTb_low [32'h00000000 : 32'h000FFFFF]; // memory lines have 8-bit width
 
-logic [7:0] flash_1      [18'h00000 : 18'h3FFFF]; // if 2 MSBs = 00
-logic [7:0] flash_2      [18'h00000 : 18'h3FFFF]; // if 2 MSBs = 08
+
+logic [7:0] boot         [18'h00000 : 18'h3FFFF]; // if 2 MSBs = 00
+logic [7:0] flash        [18'h00000 : 18'h3FFFF]; // if 2 MSBs = 08
 logic [7:0] sys_mem      [15'hB000  : 15'hFFFF];  // if 2 MSBs = 1F
-logic [7:0] ram 		 [17'h00000 : 17'h10002];  // if 2 MSBs = 20
+logic [7:0] ram 		 [17'h00000 : 17'h10002]; // if 2 MSBs = 20
 logic [7:0] peripherals  [18'h00000 : 18'h29FFF]; // if 2 MSBs = 40
 logic [7:0] m3_registers [20'h00000 : 20'hFFFFF]; // if 2 MSBs = E0
 
@@ -175,11 +154,8 @@ begin
 	rst = 0;
 	
 	
-	$readmemh(VMEM_FILE_2, flash_1);
-	$readmemh(VMEM_FILE_2, flash_2); // copies hex values from hex text file to memory array
-	
-	//R_m_axis_tdata <= {flash_1[0], flash_1[1], flash_1[2], flash_1[3]}; //send the first data by default
-	//R_m_axis_tvalid <= 1'b1;
+	$readmemh(VMEM_FILE_1, boot);  // copies first 2 instructions from bin text file to memory array
+	$readmemh(VMEM_FILE_2, flash); // copies bin values from bin text file to memory array
 	
 	
 	//GPIOA_CRL reset value
@@ -226,8 +202,9 @@ begin
 	peripherals[18'h21002] = 8'h00;
 	peripherals[18'h21003] = 8'h00;
 	
-	repeat(100) @(posedge clk);
 	
+	
+	repeat(100) @(posedge clk);
 
 	
 	rst <= 1;
@@ -235,12 +212,7 @@ begin
 	
 	repeat(10) @(posedge clk);
 	
-	/*
-	for (int i=0; i<MEM_NUM_LINE; i++) // prints memory lines
-	$display("%08x", memTb[i]);
-	*/
 	
-	//$finish;
 end
 
 
@@ -364,36 +336,7 @@ begin
 	endcase		
 end
 end
-/*
-// read without FSM
-always@(posedge clk)
-begin
 
-if(rst == 1'b1)
-begin
-
-	if(R_m_axis_tready == 1'b1) 
-	begin
-		
-		if(AR_s_axis_tvalid == 1'b1) //if the microcontroller sends valid data
-		begin
-			
-			//R_m_axis_tresp <= send_R_resp(R_select_memory);
-			R_m_axis_tvalid <= 1'b1;
-			//R_m_axis_tdata <= send_data_func(R_select_memory);
-			
-		end
-		
-		else if (AR_s_axis_tvalid == 1'b0) // if for some reason the received data are not valid, I don't have to send any data. moreover the micro has ready 0 1, so i have to deassert the valid signal (valid = 0), otherwise the micro continues to read the same data
-			R_m_axis_tvalid <= 1'b0;  
-		
-	end
-
-end	
-
-end
-
-*/
 
 
 
@@ -481,7 +424,7 @@ begin
 			if (b_sent_c == 1'b0)
 			begin
 				b_sent_c <= 1'b1;
-				if (write_memory(W_select_memory_c))   //maybe I have to pass all the memories by reference, and also the W_data/AW_addr registers
+				if (write_memory(W_select_memory_c))   
 					B_m_axis_tresp_c <= 2'b00;  //correct
 				else
 					B_m_axis_tresp_c <= 2'b10;  //not correct
@@ -536,7 +479,7 @@ begin
 			if (b_sent_s == 1'b0)
 			begin
 				b_sent_s <= 1'b1;
-				if (write_memory(W_select_memory_s))   //maybe I have to pass all the memories by reference, and also the W_data/AW_addr registers
+				if (write_memory(W_select_memory_s))  
 					B_m_axis_tresp_s <= 2'b00;  //correct
 				else
 					B_m_axis_tresp_s <= 2'b10;  //not correct
@@ -557,17 +500,17 @@ end
 
 
 
-//always block used to set some signals
+//set signals used to select the memory
 always@(*)
 begin
 
 if(rst == 1'b1)
 begin
 
-	R_select_memory_c = AR_s_axis_tdata_c[31:24];  //2 MSBs nibbles : allow me to select the memory that I have to use
+	R_select_memory_c = AR_s_axis_tdata_c[31:24];  //Most Significant Byte (first 2 nibbles): allows to select the memory to be used
 	W_select_memory_c = AW_s_axis_tdata_c[31:24];
 	
-	R_select_memory_s = AR_s_axis_tdata_s[31:24];  //2 MSBs nibbles : allow me to select the memory that I have to use
+	R_select_memory_s = AR_s_axis_tdata_s[31:24];  
 	W_select_memory_s = AW_s_axis_tdata_s[31:24];
 	
 end
@@ -583,17 +526,17 @@ function logic [31:0] send_data_func(input logic [7:0] select_memory);
 
 	case(select_memory)
 		
-		8'h00 : return {flash_1[int'(AR_s_axis_tdata_c[18:0] + 3)], flash_1[int'(AR_s_axis_tdata_c[18:0]) + 2], flash_1[int'(AR_s_axis_tdata_c[18:0]) + 1], flash_1[int'(AR_s_axis_tdata_c[18:0])]};  //each address has 8 bit, so take data from 4 addresses
+		8'h00 : return {boot[int'(AR_s_axis_tdata_c[18:0] + 3)], boot[int'(AR_s_axis_tdata_c[18:0]) + 2], boot[int'(AR_s_axis_tdata_c[18:0]) + 1], boot[int'(AR_s_axis_tdata_c[18:0])]};  //each address contains 8 bit, so take data from 4 addresses
 		
-		8'h08 : return {flash_2[int'(AR_s_axis_tdata_c[18:0] + 3)], flash_2[int'(AR_s_axis_tdata_c[18:0]) + 2], flash_2[int'(AR_s_axis_tdata_c[18:0]) + 1], flash_2[int'(AR_s_axis_tdata_c[18:0])]};  //each address has 8 bit, so take data from 4 addresses
+		8'h08 : return {flash[int'(AR_s_axis_tdata_c[18:0] + 3)], flash[int'(AR_s_axis_tdata_c[18:0]) + 2], flash[int'(AR_s_axis_tdata_c[18:0]) + 1], flash[int'(AR_s_axis_tdata_c[18:0])]};  
 		
-		8'h1F : return {sys_mem[int'(AR_s_axis_tdata_c[15:0] + 3)], sys_mem[int'(AR_s_axis_tdata_c[15:0]) + 2], sys_mem[int'(AR_s_axis_tdata_c[15:0]) + 1], sys_mem[int'(AR_s_axis_tdata_c[15:0])]};  //each address has 8 bit, so take data from 4 addresses
+		8'h1F : return {sys_mem[int'(AR_s_axis_tdata_c[15:0] + 3)], sys_mem[int'(AR_s_axis_tdata_c[15:0]) + 2], sys_mem[int'(AR_s_axis_tdata_c[15:0]) + 1], sys_mem[int'(AR_s_axis_tdata_c[15:0])]};  
 		
-		8'h20 : return {ram[int'(AR_s_axis_tdata_s[17:0] + 3)], ram[int'(AR_s_axis_tdata_s[17:0]) + 2], ram[int'(AR_s_axis_tdata_s[17:0]) + 1], ram[int'(AR_s_axis_tdata_s[17:0])]};  //each address has 8 bit, so take data from 4 addresses
+		8'h20 : return {ram[int'(AR_s_axis_tdata_s[17:0] + 3)], ram[int'(AR_s_axis_tdata_s[17:0]) + 2], ram[int'(AR_s_axis_tdata_s[17:0]) + 1], ram[int'(AR_s_axis_tdata_s[17:0])]};  
 		
-		8'h40 : return {peripherals[int'(AR_s_axis_tdata_s[18:0] + 3)], peripherals[int'(AR_s_axis_tdata_s[18:0]) + 2], peripherals[int'(AR_s_axis_tdata_s[18:0]) + 1], peripherals[int'(AR_s_axis_tdata_s[18:0])]};  //each address has 8 bit, so take data from 4 addresses
+		8'h40 : return {peripherals[int'(AR_s_axis_tdata_s[18:0] + 3)], peripherals[int'(AR_s_axis_tdata_s[18:0]) + 2], peripherals[int'(AR_s_axis_tdata_s[18:0]) + 1], peripherals[int'(AR_s_axis_tdata_s[18:0])]};  
 		
-		8'hE0 : return {m3_registers[int'(AR_s_axis_tdata_s[20:0] + 3)], m3_registers[int'(AR_s_axis_tdata_s[20:0]) + 2], m3_registers[int'(AR_s_axis_tdata_s[20:0]) + 1], m3_registers[int'(AR_s_axis_tdata_s[20:0])]};  //each address has 8 bit, so take data from 4 addresses
+		8'hE0 : return {m3_registers[int'(AR_s_axis_tdata_s[20:0] + 3)], m3_registers[int'(AR_s_axis_tdata_s[20:0]) + 2], m3_registers[int'(AR_s_axis_tdata_s[20:0]) + 1], m3_registers[int'(AR_s_axis_tdata_s[20:0])]};  
 		
 		default: begin
 		         end
@@ -608,16 +551,16 @@ endfunction
 function logic [1:0] send_R_resp(input logic [7:0] select_memory);
 
 	case(select_memory)
-		//cambio AR_s_axis_tdata con un address buffer (addr) se uso la FSM
 		
-		8'h00 : begin  //Flash_1
+		
+		8'h00 : begin  //boot
 					if(AR_s_axis_tdata_c >= 32'h00000000 && AR_s_axis_tdata_c <= 32'h0003FFFF)  //check if the address is in the correct range
 						return 2'b00;  //correct
 					else
 						return 2'b10; //read error: not valid address
 				end
 				
-		8'h08 : begin //Flash_2
+		8'h08 : begin //flash
 					if(AR_s_axis_tdata_c >= 32'h08000000 && AR_s_axis_tdata_c <= 32'h0803FFFF)
 						return 2'b00;
 					else
@@ -662,23 +605,7 @@ endfunction
 
 
 
-//FARE QUESTA COSA:
-/*
-SOLO PER LE PERIFERICHE, IL PROCESSORE POTREBBE VOLER SCRIVERE HALF-WORD / BYTE, QUINDI FACCIO COSì:
-- controllo se l'indirizzo è della periferica
-- var_addr = addr[3:0]
-	if var_add > 0 
-		tmp = var_addr 
-		new_addr = var_addr - tmp
-		
-	if var_addr range(4,8)
-		tmp = var_addr - 4
-		new_addr = var_addr - tmp
-		addr[3:0] = new_addr
-		
-	or >8 / <12
-		
-*/
+
 
 
 
@@ -688,26 +615,26 @@ SOLO PER LE PERIFERICHE, IL PROCESSORE POTREBBE VOLER SCRIVERE HALF-WORD / BYTE,
 function logic write_memory (input logic [7:0] select_memory);
 	case(select_memory)
 		
-		8'h00 : begin  //Flash_1
+		8'h00 : begin  //boot
 					if(AW_addr_c >= 32'h00000000 && AW_addr_c <= 32'h0003FFFF)  //check if the address is in the correct range
 					begin
-						flash_1[int'(AW_addr_c[18:0])] <= W_data_c[7:0];
-						flash_1[int'(AW_addr_c[18:0])+1] <= W_data_c[15:8];
-						flash_1[int'(AW_addr_c[18:0])+2] <= W_data_c[23:16];
-						flash_1[int'(AW_addr_c[18:0])+3]   <= W_data_c[31:24];    
+						boot[int'(AW_addr_c[18:0])]   <= W_data_c[7:0];
+						boot[int'(AW_addr_c[18:0])+1] <= W_data_c[15:8];
+						boot[int'(AW_addr_c[18:0])+2] <= W_data_c[23:16];
+						boot[int'(AW_addr_c[18:0])+3] <= W_data_c[31:24];    
 						return 1;
 					end
 					else
 						return 0;
 				end
 				
-		8'h08 : begin //Flash_2
+		8'h08 : begin //flash
 					if(AW_addr_c >= 32'h08000000 && AW_addr_c <= 32'h0803FFFF)
 					begin
-						flash_2[int'(AW_addr_c[18:0])] <= W_data_c[7:0];
-						flash_2[int'(AW_addr_c[18:0])+1] <= W_data_c[15:8];
-						flash_2[int'(AW_addr_c[18:0])+2] <= W_data_c[23:16];
-						flash_2[int'(AW_addr_c[18:0])+3]   <= W_data_c[31:24];
+						flash[int'(AW_addr_c[18:0])]   <= W_data_c[7:0];
+						flash[int'(AW_addr_c[18:0])+1] <= W_data_c[15:8];
+						flash[int'(AW_addr_c[18:0])+2] <= W_data_c[23:16];
+						flash[int'(AW_addr_c[18:0])+3] <= W_data_c[31:24];
 						return 1;
 					end
 					else
@@ -717,10 +644,10 @@ function logic write_memory (input logic [7:0] select_memory);
 		8'h1F : begin //sys_mem
 					if(AW_addr_c >= 32'h1FFFB000 && AW_addr_c <= 32'h1FFFFFFF)
 					begin
-						sys_mem[int'(AW_addr_c[15:0])] <= W_data_c[7:0];
+						sys_mem[int'(AW_addr_c[15:0])]   <= W_data_c[7:0];
 						sys_mem[int'(AW_addr_c[15:0])+1] <= W_data_c[15:8];
 						sys_mem[int'(AW_addr_c[15:0])+2] <= W_data_c[23:16];
-						sys_mem[int'(AW_addr_c[15:0])+3]   <= W_data_c[31:24];
+						sys_mem[int'(AW_addr_c[15:0])+3] <= W_data_c[31:24];
 						return 1;
 					end
 					else
@@ -730,10 +657,10 @@ function logic write_memory (input logic [7:0] select_memory);
 		8'h20 : begin  //ram 
 					if(AW_addr_s >= 32'h20000000 && AW_addr_s <= 32'h2000FFFF)
 					begin
-						ram[int'(AW_addr_s[17:0])] <= W_data_s[7:0];
+						ram[int'(AW_addr_s[17:0])]   <= W_data_s[7:0];
 						ram[int'(AW_addr_s[17:0])+1] <= W_data_s[15:8];
 						ram[int'(AW_addr_s[17:0])+2] <= W_data_s[23:16];
-						ram[int'(AW_addr_s[17:0])+3]   <= W_data_s[31:24];
+						ram[int'(AW_addr_s[17:0])+3] <= W_data_s[31:24];
 						return 1;
 					end
 					else
@@ -756,10 +683,10 @@ function logic write_memory (input logic [7:0] select_memory);
 		8'hE0 : begin  //m3_registers 
 					if(AW_addr_s >= 32'hE0000000 && AW_addr_s <= 32'hE00FFFFF)
 					begin
-						m3_registers[int'(AW_addr_s[20:0])] <= W_data_s[7:0];
+						m3_registers[int'(AW_addr_s[20:0])]   <= W_data_s[7:0];
 						m3_registers[int'(AW_addr_s[20:0])+1] <= W_data_s[15:8];
 						m3_registers[int'(AW_addr_s[20:0])+2] <= W_data_s[23:16];
-						m3_registers[int'(AW_addr_s[20:0])+3]   <= W_data_s[31:24];
+						m3_registers[int'(AW_addr_s[20:0])+3] <= W_data_s[31:24];
 						return 1;
 					end
 					else
@@ -773,79 +700,35 @@ endfunction
 
 
 
-/*
-2:
-************* PSEUDOCODE NO FSM: FULL DUPLEX **************
-
-SEGNALI: 
-
-AWREADY
-AWVALID
-AWADDR
-AWPROT  (3 bit)//sono tutti 0 dal master, quindi la memoria li può ignorare // input per la memoria
-
-WREADY
-WVALID
-WDATA
-WSTRB (4 bit) // sono tutti a 1 , quindi li ignoriamo (?)//input per la memoria  
-
-BVALID
-BREADY
-BRESP  //serve per dire al processore se la scrittura è corretta  //output per la memoria
-
-ARVALID
-ARREADY
-ARADDR
-ARPROT  (3 bit) // da ignorare (lato memoria)  //input per la memoria
-
-RVALID
-RREADY
-RDATA
-RRESP (2 bit) // è necessario? serve per dire al processore se la lettura è corretta  //output per la memoria
-
-*/
 
 
 
+//***************** DEBUGGER *******************
 
 
-//fare degli always@(posedge clk) per ogni periferica
-//es: periferica del GPIO_A : al posedge del clock controllo i bit di tutti i registri che interessano questa periferica, 
-//poi genero un segnale in "output" (un segnale nel testbench) che sia coerente con i dati presenti nei registri
-//es: EN = 1; PORT_A = 1; PIN_4 = 1; CTRL = 01 (output pin); OUT = 1  -> accendi il led: "pin_4 <= 1;"
+logic debug_led = 1'b0;
+logic [31:0] debug_addr = 32'b0;
+logic [31:0] debug_var = 32'b0;
 
-
-//in ogni always block introdurre un delay (per rispettare il reset) di 100 colpi di clock: if start == 0: repeat(100) @(posedge clk); 
-//																							elsif start == 1: algoritmo.
-//quindi introdurre un segnale "start" nell' initial block. (o magari è meglio usare direttamente il segnale rst)
-
-
-
-
-// 0x4001 0800 - 0x4001 0BFF GPIO Port A
-// ODR: offset 0x0C
-logic led;// = 1'b0;
-
-
-
-// GPIO_A Peripheral
+// READ FROM THAT SPECIFIC ADDRESS   0x4001 0800 : CTR del GPIOA
 always@(*)
 begin
 
 if(rst == 1'b1)
 begin
 	
-	led = flash_1[18'h3FFFC];
-
+	debug_led = peripherals[18'h10800];
+	
+	debug_addr = {boot[int'(18'h3FFF8 + 3)], boot[int'(18'h3FFF8 + 2)], boot[int'(18'h3FFF8 + 1)], boot[int'(18'h3FFF8)]};
+	debug_var = {boot[int'(18'h3FFF4 + 3)], boot[int'(18'h3FFF4 + 2)], boot[int'(18'h3FFF4 + 1)], boot[int'(18'h3FFF4)]};
 end	
 
 end 
 
 
+	
 
-
-
-
+//***********************************************
 
 
 endmodule : tb_memory_test
