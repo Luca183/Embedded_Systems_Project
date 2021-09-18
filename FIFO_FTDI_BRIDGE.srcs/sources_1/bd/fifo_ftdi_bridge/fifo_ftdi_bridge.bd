@@ -1,0 +1,628 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0x655708D4F57EA1E2",
+      "device": "xc7a100tcsg324-1",
+      "gen_directory": "../../../../FIFO_FTDI_BRIDGE.gen/sources_1/bd/fifo_ftdi_bridge",
+      "name": "fifo_ftdi_bridge",
+      "rev_ctrl_bd_flag": "RevCtrlBdOff",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2021.1",
+      "validated": "true"
+    },
+    "design_tree": {
+      "util_vector_logic_0": "",
+      "Receiver_0": "",
+      "Controller_0": "",
+      "Transmitter_0": ""
+    },
+    "interface_ports": {
+      "s_axis_0": {
+        "mode": "Slave",
+        "vlnv_bus_definition": "xilinx.com:interface:axis:1.0",
+        "vlnv": "xilinx.com:interface:axis_rtl:1.0",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "fifo_ftdi_bridge_clk_in1_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000"
+          },
+          "HAS_TKEEP": {
+            "value": "0"
+          },
+          "HAS_TLAST": {
+            "value": "0"
+          },
+          "HAS_TREADY": {
+            "value": "1"
+          },
+          "HAS_TSTRB": {
+            "value": "0"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "LAYERED_METADATA": {
+            "value": "undef"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          },
+          "TDATA_NUM_BYTES": {
+            "value": "1"
+          },
+          "TDEST_WIDTH": {
+            "value": "0"
+          },
+          "TID_WIDTH": {
+            "value": "0"
+          },
+          "TUSER_WIDTH": {
+            "value": "0"
+          }
+        }
+      },
+      "m_axis_0": {
+        "mode": "Master",
+        "vlnv_bus_definition": "xilinx.com:interface:axis:1.0",
+        "vlnv": "xilinx.com:interface:axis_rtl:1.0",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "fifo_ftdi_bridge_clk_in1_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000"
+          },
+          "HAS_TKEEP": {
+            "value": "0",
+            "value_src": "const_prop"
+          },
+          "HAS_TLAST": {
+            "value": "0",
+            "value_src": "const_prop"
+          },
+          "HAS_TREADY": {
+            "value": "1",
+            "value_src": "const_prop"
+          },
+          "HAS_TSTRB": {
+            "value": "0",
+            "value_src": "const_prop"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "LAYERED_METADATA": {
+            "value": "undef",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          },
+          "TDATA_NUM_BYTES": {
+            "value": "1",
+            "value_src": "auto_prop"
+          },
+          "TDEST_WIDTH": {
+            "value": "0",
+            "value_src": "const_prop"
+          },
+          "TID_WIDTH": {
+            "value": "0",
+            "value_src": "const_prop"
+          },
+          "TUSER_WIDTH": {
+            "value": "0",
+            "value_src": "const_prop"
+          }
+        }
+      }
+    },
+    "ports": {
+      "RXFn_ftdi_0": {
+        "direction": "I"
+      },
+      "TXEn_ftdi_0": {
+        "direction": "I"
+      },
+      "WRn_ftdi_0": {
+        "direction": "O"
+      },
+      "OEn_ftdi_0": {
+        "direction": "O"
+      },
+      "RDn_ftdi_0": {
+        "direction": "O"
+      },
+      "Op1_0": {
+        "direction": "I",
+        "left": "0",
+        "right": "0",
+        "parameters": {
+          "PortType": {
+            "value": "undef",
+            "value_src": "ip_prop"
+          },
+          "PortType.PROP_SRC": {
+            "value": "false",
+            "value_src": "ip_prop"
+          }
+        }
+      },
+      "clk_in1_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "ASSOCIATED_BUSIF": {
+            "value": "s_axis_0:m_axis_0",
+            "value_src": "default"
+          },
+          "CLK_DOMAIN": {
+            "value": "fifo_ftdi_bridge_clk_in1_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      },
+      "data_INOUT_ftdi_0": {
+        "direction": "IO",
+        "left": "7",
+        "right": "0"
+      }
+    },
+    "components": {
+      "util_vector_logic_0": {
+        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
+        "xci_name": "fifo_ftdi_bridge_util_vector_logic_0_0",
+        "xci_path": "ip\\fifo_ftdi_bridge_util_vector_logic_0_0\\fifo_ftdi_bridge_util_vector_logic_0_0.xci",
+        "inst_hier_path": "util_vector_logic_0",
+        "parameters": {
+          "C_OPERATION": {
+            "value": "not"
+          },
+          "C_SIZE": {
+            "value": "1"
+          }
+        }
+      },
+      "Receiver_0": {
+        "vlnv": "xilinx.com:module_ref:Receiver:1.0",
+        "xci_name": "fifo_ftdi_bridge_Receiver_0_0",
+        "xci_path": "ip\\fifo_ftdi_bridge_Receiver_0_0\\fifo_ftdi_bridge_Receiver_0_0.xci",
+        "inst_hier_path": "Receiver_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Receiver",
+          "boundary_crc": "0x0"
+        },
+        "interface_ports": {
+          "m_axis": {
+            "mode": "Master",
+            "vlnv_bus_definition": "xilinx.com:interface:axis:1.0",
+            "vlnv": "xilinx.com:interface:axis_rtl:1.0",
+            "parameters": {
+              "TDATA_NUM_BYTES": {
+                "value": "1",
+                "value_src": "auto"
+              },
+              "TDEST_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "TID_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "TUSER_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "HAS_TREADY": {
+                "value": "1",
+                "value_src": "constant"
+              },
+              "HAS_TSTRB": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "HAS_TKEEP": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "HAS_TLAST": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "100000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "fifo_ftdi_bridge_clk_in1_0",
+                "value_src": "default_prop"
+              }
+            },
+            "port_maps": {
+              "TDATA": {
+                "physical_name": "m_axis_tdata",
+                "direction": "O",
+                "left": "7",
+                "right": "0"
+              },
+              "TVALID": {
+                "physical_name": "m_axis_tvalid",
+                "direction": "O"
+              },
+              "TREADY": {
+                "physical_name": "m_axis_tready",
+                "direction": "I"
+              }
+            }
+          }
+        },
+        "ports": {
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_BUSIF": {
+                "value": "m_axis",
+                "value_src": "constant"
+              },
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "100000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "fifo_ftdi_bridge_clk_in1_0",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "RXFn_ftdi": {
+            "direction": "I"
+          },
+          "RDn_ftdi": {
+            "direction": "O"
+          },
+          "data_IN_ftdi": {
+            "direction": "I",
+            "left": "7",
+            "right": "0"
+          },
+          "EN_RX": {
+            "direction": "I"
+          },
+          "full_fifo_rx": {
+            "direction": "O"
+          }
+        }
+      },
+      "Controller_0": {
+        "vlnv": "xilinx.com:module_ref:Controller:1.0",
+        "xci_name": "fifo_ftdi_bridge_Controller_0_2",
+        "xci_path": "ip\\fifo_ftdi_bridge_Controller_0_2\\fifo_ftdi_bridge_Controller_0_2.xci",
+        "inst_hier_path": "Controller_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Controller",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "100000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "fifo_ftdi_bridge_clk_in1_0",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "RXFn_ftdi": {
+            "direction": "I"
+          },
+          "TXEn_ftdi": {
+            "direction": "I"
+          },
+          "OEn_ftdi": {
+            "direction": "O"
+          },
+          "data_INOUT_ftdi": {
+            "direction": "IO",
+            "left": "7",
+            "right": "0"
+          },
+          "EN_RX": {
+            "direction": "O"
+          },
+          "EN_TX": {
+            "direction": "O"
+          },
+          "full_fifo_rx": {
+            "direction": "I"
+          },
+          "data_IN_ftdi": {
+            "direction": "O",
+            "left": "7",
+            "right": "0"
+          },
+          "data_OUT_ftdi": {
+            "direction": "I",
+            "left": "7",
+            "right": "0"
+          }
+        }
+      },
+      "Transmitter_0": {
+        "vlnv": "xilinx.com:module_ref:Transmitter:1.0",
+        "xci_name": "fifo_ftdi_bridge_Transmitter_0_0",
+        "xci_path": "ip\\fifo_ftdi_bridge_Transmitter_0_0\\fifo_ftdi_bridge_Transmitter_0_0.xci",
+        "inst_hier_path": "Transmitter_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "Transmitter",
+          "boundary_crc": "0x0"
+        },
+        "interface_ports": {
+          "s_axis": {
+            "mode": "Slave",
+            "vlnv_bus_definition": "xilinx.com:interface:axis:1.0",
+            "vlnv": "xilinx.com:interface:axis_rtl:1.0",
+            "parameters": {
+              "TDATA_NUM_BYTES": {
+                "value": "1",
+                "value_src": "auto"
+              },
+              "TDEST_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "TID_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "TUSER_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "HAS_TREADY": {
+                "value": "1",
+                "value_src": "constant"
+              },
+              "HAS_TSTRB": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "HAS_TKEEP": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "HAS_TLAST": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "100000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "fifo_ftdi_bridge_clk_in1_0",
+                "value_src": "default_prop"
+              },
+              "LAYERED_METADATA": {
+                "value": "undef",
+                "value_src": "user_prop"
+              }
+            },
+            "port_maps": {
+              "TDATA": {
+                "physical_name": "s_axis_tdata",
+                "direction": "I",
+                "left": "7",
+                "right": "0"
+              },
+              "TVALID": {
+                "physical_name": "s_axis_tvalid",
+                "direction": "I"
+              },
+              "TREADY": {
+                "physical_name": "s_axis_tready",
+                "direction": "O"
+              }
+            }
+          }
+        },
+        "ports": {
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_BUSIF": {
+                "value": "s_axis",
+                "value_src": "constant"
+              },
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "FREQ_HZ": {
+                "value": "100000000",
+                "value_src": "user_prop"
+              },
+              "CLK_DOMAIN": {
+                "value": "fifo_ftdi_bridge_clk_in1_0",
+                "value_src": "default_prop"
+              }
+            }
+          },
+          "EN_TX": {
+            "direction": "I"
+          },
+          "data_OUT_ftdi": {
+            "direction": "O",
+            "left": "7",
+            "right": "0"
+          },
+          "TXEn_ftdi": {
+            "direction": "I"
+          },
+          "WRn_ftdi": {
+            "direction": "O"
+          }
+        }
+      }
+    },
+    "interface_nets": {
+      "Receiver_0_m_axis": {
+        "interface_ports": [
+          "m_axis_0",
+          "Receiver_0/m_axis"
+        ]
+      },
+      "s_axis_0_1": {
+        "interface_ports": [
+          "s_axis_0",
+          "Transmitter_0/s_axis"
+        ]
+      }
+    },
+    "nets": {
+      "Controller_0_EN_RX": {
+        "ports": [
+          "Controller_0/EN_RX",
+          "Receiver_0/EN_RX"
+        ]
+      },
+      "Controller_0_EN_TX": {
+        "ports": [
+          "Controller_0/EN_TX",
+          "Transmitter_0/EN_TX"
+        ]
+      },
+      "Controller_0_OEn_ftdi": {
+        "ports": [
+          "Controller_0/OEn_ftdi",
+          "OEn_ftdi_0"
+        ]
+      },
+      "Controller_0_WRn_ftdi": {
+        "ports": [
+          "Transmitter_0/WRn_ftdi",
+          "WRn_ftdi_0"
+        ]
+      },
+      "Controller_0_data_IN_ftdi": {
+        "ports": [
+          "Controller_0/data_IN_ftdi",
+          "Receiver_0/data_IN_ftdi"
+        ]
+      },
+      "Net": {
+        "ports": [
+          "data_INOUT_ftdi_0",
+          "Controller_0/data_INOUT_ftdi"
+        ]
+      },
+      "Op1_0_1": {
+        "ports": [
+          "Op1_0",
+          "util_vector_logic_0/Op1"
+        ]
+      },
+      "RXFn_ftdi_0_1": {
+        "ports": [
+          "RXFn_ftdi_0",
+          "Receiver_0/RXFn_ftdi",
+          "Controller_0/RXFn_ftdi"
+        ]
+      },
+      "Receiver_0_RDn_ftdi": {
+        "ports": [
+          "Receiver_0/RDn_ftdi",
+          "RDn_ftdi_0"
+        ]
+      },
+      "Receiver_0_full_fifo_rx": {
+        "ports": [
+          "Receiver_0/full_fifo_rx",
+          "Controller_0/full_fifo_rx"
+        ]
+      },
+      "TXEn_ftdi_0_1": {
+        "ports": [
+          "TXEn_ftdi_0",
+          "Controller_0/TXEn_ftdi",
+          "Transmitter_0/TXEn_ftdi"
+        ]
+      },
+      "Transmitter_0_data_OUT_ftdi": {
+        "ports": [
+          "Transmitter_0/data_OUT_ftdi",
+          "Controller_0/data_OUT_ftdi"
+        ]
+      },
+      "clk_wiz_clk_out1": {
+        "ports": [
+          "clk_in1_0",
+          "Receiver_0/clk",
+          "Controller_0/clk",
+          "Transmitter_0/clk"
+        ]
+      },
+      "util_vector_logic_0_Res": {
+        "ports": [
+          "util_vector_logic_0/Res",
+          "Receiver_0/reset",
+          "Controller_0/reset",
+          "Transmitter_0/reset"
+        ]
+      }
+    }
+  }
+}
